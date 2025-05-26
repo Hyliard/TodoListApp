@@ -1,13 +1,13 @@
 //
-//  ContentView.swift
+//  ToDoListView.swift
 //  TodoListApp
 //
-//  Created by Hyliard on 18/11/2024.
+//  Created by Luis Martinez on 26/05/2025.
 //
 
 import SwiftUI
 
-struct ContentView: View {
+struct ToDoListView: View {
     @State private var todos: [TodoItem] = []
     @State private var newTodoTitle: String = ""
     
@@ -79,8 +79,6 @@ struct ContentView: View {
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
+#Preview {
+    ToDoListView()
 }
