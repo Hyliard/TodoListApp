@@ -78,3 +78,9 @@ struct ContentView: View {
         todos.remove(atOffsets: offsets)
     }
 }
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
+}
