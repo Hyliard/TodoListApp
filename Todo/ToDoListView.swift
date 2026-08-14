@@ -13,65 +13,101 @@ struct ToDoListView: View {
     private var cleanTitle: String { newTodoTitle.trimmingCharacters(in: .whitespacesAndNewlines) }
 
     var body: some View {
+        ZStack {
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color(red: 0.1, green: 0.1, blue: 0.3),
+                    Color(red: 0.3, green: 0.1, blue: 0.3)
+                ]),
+                startPoint: .top,
+                endPoint: .bottom)
+            .ignoresSafeArea()
 
-        VStack {
-            // Campo de entrada para agregar nuevas tareas
-            HStack {
-                TextField("Nueva tarea...", text: $newTodoTitle)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding()
+            VStack {
+                HStack {
+                    TextField(
+                        "",
+                        text: $newTodoTitle,
+                        prompt: Text("Nueva tarea...")
+                            .foregroundColor(Color.white.opacity(0.6))
+                    )
+                    .foregroundColor(.white)
+                    .textInputAutocapitalization(.sentences)
+                    .disableAutocorrection(false)
 
-                Button(action: {
-                    addTodo()
-                }) {
-                    Image(systemName: "plus.circle")
-                        .font(.largeTitle)
-                        .foregroundColor(Color("backgroundButton"))
-                        .padding(.trailing)
-                }
-                .disabled(cleanTitle.isEmpty)
-            }
-
-            // Lista de tareas
-            if todos.isEmpty {
-                VStack(spacing: 8) {
-                    Image(systemName: "checklist")
-                        .font(.system(size: 48))
-                        .foregroundColor(.gray)
-                    Text("No tienes tareas")
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                    Text("Agrega una tarea para comenzar")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .multilineTextAlignment(.center)
-            } else {
-                List {
-                    ForEach(todos) { todo in
-                        HStack {
-                            Button(action: {
-                                toggleCompletion(for: todo)
-                            }) {
-                                Image(systemName: todo.isCompleted ? "checkmark.circle.fill" : "circle")
-                                    .foregroundColor(todo.isCompleted ? .green : .gray)
-                            }
-
-                            Text(todo.title)
-                                .strikethrough(todo.isCompleted, color: .black)
-                        }
-
+                    Button(action: { addTodo() }) {
+                        Image(systemName: "plus.circle.fill")
+                            .font(.system(size: 28, weight: .semibold))
+                            .foregroundColor(.orange)
                     }
-                    .onDelete(perform: deleteTodo)
+                    .accessibilityLabel("Agregar tarea")
+                    .disabled(cleanTitle.isEmpty)
                 }
-                .listStyle(InsetGroupedListStyle())
+                .padding(.horizontal, 12)
+                .padding(.vertical, 10)
+                .background(
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .fill(.ultraThinMaterial)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .strokeBorder(.white.opacity(0.15), lineWidth: 1)
+                )
+                .padding(.horizontal, 16)
+
+                if todos.isEmpty {
+                    VStack(spacing: 8) {
+                        Image(systemName: "checklist")
+                            .font(.system(size: 48))
+                            .foregroundColor(Color.white.opacity(0.7))
+                        Text("No tienes tareas")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                        Text("Agrega una tarea para comenzar")
+                            .font(.subheadline)
+                            .foregroundColor(Color.white.opacity(0.6))
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .multilineTextAlignment(.center)
+                } else {
+                    List {
+                        ForEach(todos) { todo in
+                            HStack(spacing: 12) {
+                                Button(action: {
+                                    toggleCompletion(for: todo)
+                                }) {
+                                    Image(systemName: todo.isCompleted ? "checkmark.circle.fill" : "circle")
+                                        .foregroundColor(todo.isCompleted ? .green : Color.white.opacity(0.8))
+                                        .font(.system(size: 22, weight: .semibold))
+                                }
+                                .accessibilityLabel(todo.isCompleted ? "Marcar como pendiente" : "Marcar como completada")
+
+                                Text(todo.title)
+                                    .foregroundColor(.white)
+                                    .strikethrough(todo.isCompleted, color: .white)
+                                    .opacity(todo.isCompleted ? 0.7 : 1.0)
+                            }
+                            .padding(12)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                    .fill(.ultraThinMaterial)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                    .strokeBorder(.white.opacity(0.15), lineWidth: 1)
+                            )
+                            .listRowBackground(Color.clear)
+                        }
+                        .onDelete(perform: deleteTodo)
+                    }
+                    .scrollContentBackground(.hidden)
+                    .listStyle(.plain)
+                    .listRowSeparator(.hidden)
+                }
+
             }
-
+            .navigationTitle("Lista de Tareas")
         }
-        .background(Color("backgroundApp"))
-        .navigationTitle("Lista de Tareas")
-
     }
 
     // Función para agregar una nueva tarea
