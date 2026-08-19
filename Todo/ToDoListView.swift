@@ -6,9 +6,11 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ToDoListView: View {
-    @State private var todos: [TodoItem] = []
+    @Environment(\.modelContext) private var modelContext
+    @Query(sort: \TodoItem.createdAt) private var todos: [TodoItem]
     @State private var newTodoTitle: String = ""
     private var cleanTitle: String { newTodoTitle.trimmingCharacters(in: .whitespacesAndNewlines) }
 
@@ -115,23 +117,25 @@ struct ToDoListView: View {
         let title = cleanTitle
         guard !title.isEmpty else { return }
         let newTodo = TodoItem(title: title)
-        todos.append(newTodo)
+        modelContext.insert(newTodo)
         newTodoTitle = ""
     }
 
     // Función para marcar una tarea como completada
     private func toggleCompletion(for todo: TodoItem) {
-        if let index = todos.firstIndex(where: { $0.id == todo.id }) {
-            todos[index].isCompleted.toggle()
-        }
+        todo.isCompleted.toggle()
     }
 
     // Función para eliminar una tarea
     private func deleteTodo(at offsets: IndexSet) {
-        todos.remove(atOffsets: offsets)
+        for index in offsets {
+            let todo = todos[index]
+            modelContext.delete(todo)
+        }
     }
 }
 
 #Preview {
     ToDoListView()
+        .modelContainer(for: TodoItem.self, inMemory: true)
 }

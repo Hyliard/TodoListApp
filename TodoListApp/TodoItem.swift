@@ -6,9 +6,24 @@
 //
 
 import Foundation
+import SwiftData
 
-struct TodoItem: Identifiable {
-    let id = UUID()
+@Model
+final class TodoItem {
+    var id: UUID
     var title: String
-    var isCompleted: Bool = false
+    var isCompleted: Bool
+    var createdAt: Date
+
+    init(
+        id: UUID = UUID(),
+        title: String,
+        isCompleted: Bool = false,
+        createdAt: Date = Date()
+    ) {
+        self.id = id
+        self.title = title
+        self.isCompleted = isCompleted
+        self.createdAt = createdAt
+    }
 }
